@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>High Daq</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="logo.png">
+  <style>
+    /* --- CSS CRITIQUE ET EFFETS SHINY --- */
+    :root { --gold: #f5d38b; --gold-dark: #b67c00; }
+
+    .btn-shiny {
+      position: relative; overflow: hidden; transition: all 0.3s ease;
+      background: var(--gold); color: #000; font-weight: bold; border: none; cursor: pointer;
+    }
+    .btn-shiny::after {
+      content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%;
+      background: rgba(255,255,255,0.4); transform: rotate(30deg); transition: all 0.6s ease;
+    }
+    .btn-shiny:hover::after { left: 120%; }
+    .btn-shiny:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(245, 211, 139, 0.5); }
+
+    .cart-panel {
+      position: fixed; right: 20px; bottom: 20px; width: 350px;
+      background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(15px);
+      border: 1px solid var(--gold); border-radius: 20px; z-index: 9999;
+      box-shadow: 0 20px 60px rgba(0,0,0,1); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex; flex-direction: column;
+    }
+    .cart-closed { transform: translateY(calc(100% - 65px)); opacity: 0.8; }
+    
+    .cart-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+    .suggestion-card { 
+      background: rgba(255,255,255,0.03); border: 1px solid #333; padding: 12px; 
+      margin-top: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="intro">
+    <div class="intro-layer intro-flyin">
+      <div class="intro-halo"></div>
+      <div class="intro-logo-container">
+        <div class="intro-logo">High Daq</div>
+        <div class="intro-subnames">Maxandre</div>
+      </div>
+    </div>
+    <div class="intro-layer intro-curtain">
+      <div class="curtain curtain-left"></div>
+      <div class="curtain curtain-right"></div>
+    </div>
+  </div>
+
+<header class="site-header">
+    <div class="logo">Maxandre Shop</div>
+    <nav class="main-nav">
+      <a href="#tshirts">T-shirts</a>
+      <a href="#gilets">Gilets</a>
+      <a href="#assistant">Assistant IA</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1><span>Maxandre Shop.</span></h1>
+      <p>Trouver le plaisir de porter des vêtements .</p>
+      <button class="btn-primary btn-shiny" onclick="document.getElementById('tshirts').scrollIntoView({behavior:'smooth'})" style="padding: 15px 30px; border-radius: 50px; margin-top: 20px;">
+        Découvrir la collection
+      </button>
+    </div>
+  </section>
+
+  <main>
+    <section id="tshirts" class="product-section">
+      <h2 class="section-title">La Gamme T-Shirts</h2>
+      <div class="product-grid">
+        <article class="product-card" data-type="tshirt" data-style="fit">
+          <img src="tshirt1.jpg" alt="T-shirt Blanc Fit">
+          <h3>T-shirt Blanc Fit</h3>
+          <p class="description">T-Shirt Blanc High Daq avec écritures.</p>
+          <p class="price">15 €</p>
+          <button class="btn-secondary btn-shiny" onclick="ajouterAuPanier('T-shirt Blanc Fit', 15)">Ajouter au panier</button>
+        </article>
+
+        <article class="product-card" data-type="tshirt" data-style="oversize">
+          <img src="tshirt2.jpg" alt="T-shirt Noir">
+          <h3>T-shirt Noir</h3>
+          <p class="description">T-Shirt Noir large avec logo.</p>
+          <p class="price">15 €</p>
+          <button class="btn-secondary btn-shiny" onclick="ajouterAuPanier('T-shirt Noir', 15)">Ajouter au panier</button>
+        </article>
+      </div>
+    </section>
+
+    <section id="gilets" class="product-section">
+      <h2 class="section-title">Pulls & Gilets</h2>
+      <div class="product-grid">
+        <article class="product-card" data-type="gilet" data-style="zip">
+          <img src="pull1.jpg" alt="Pull Blanc">
+          <h3>Pull Zip Blanc</h3>
+          <p class="description">Pull zippé blanc.</p>
+          <p class="price">25 €</p>
+          <button class="btn-secondary btn-shiny" onclick="ajouterAuPanier('Pull Blanc', 25)">Ajouter au panier</button>
+        </article>
+
+        <article class="product-card" data-type="gilet" data-style="oversize">
+          <img src="pull2.jpg" alt="Pull Noir">
+          <h3>Pull Oversize Noir</h3>
+          <p class="description">Pull noir décontracté.</p>
+          <p class="price">25 €</p>
+          <button class="btn-secondary btn-shiny" onclick="ajouterAuPanier('Pull Noir', 25)">Ajouter au panier</button>
+        </article>
+      </div>
+    </section>
+
+    <section id="assistant" class="assistant-section" style="margin-top: 100px; padding: 50px 20px;">
+    <h2 style="text-align: center; color: var(--gold); font-family: sans-serif;">Assistant Personnel Maxandre</h2>
+    
+      <div class="assistant-container" style="max-width: 600px; margin: 0 auto;">
+        <div id="messages" style="height: 350px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border: 1px solid #333; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
+        </div>
+
+        <form id="assistant-form" style="display: flex; gap: 10px;">
+            <input type="text" id="assistant-input" placeholder="Dis-moi ton nom ou ton style..." 
+                style="flex:1; background:#0a0a0a; border:1px solid #444; color:#fff; padding:12px; border-radius:10px; outline: none;">
+            
+            <button type="submit" class="btn-shiny" style="padding: 0 25px; border-radius: 10px; cursor: pointer; background: var(--gold); border: none; font-weight: bold;">
+                Envoyer
+            </button>
+        </form>
+
+        <div id="assistant-suggestions" style="margin-top: 20px; display: grid; gap: 10px;"></div>
+      </div>
+    </section>
+
+  <div class="cart-panel" id="cart-panel">
+    <div class="cart-header" style="padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222;">
+      <h3 style="margin:0; font-size: 16px;">🛒 TON PANIER</h3>
+      <button id="cart-toggle" onclick="toggleCart()" style="background:none; border:none; color:var(--gold); font-size:24px; cursor:pointer;">–</button>
+    </div>
+    
+    <div id="cart-items" style="flex: 1; overflow-y: auto; min-height: 100px;"></div>
+
+    <div class="promo-area" style="padding: 15px; border-top: 1px solid #222;">
+      <div style="display: flex; gap: 5px;">
+        <input type="text" id="promo-input" placeholder="Code promo..." style="flex:1; background:#000; border:1px solid #333; color:#fff; padding:10px; border-radius:8px;">
+        <button onclick="validerPromo()" class="btn-shiny" style="padding: 0 15px; border-radius: 8px;">OK</button>
+      </div>
+      <div id="promo-msg" style="font-size: 10px; margin-top: 5px; text-align: center;"></div>
+    </div>
+
+    <div class="cart-total" style="padding: 20px; text-align: center; font-size: 18px; background: rgba(255,255,255,0.02);">
+      TOTAL : <span id="cart-total-display" style="color: var(--gold); font-weight: bold;">0€</span>
+    </div>
+    
+    <button class="btn-shiny" onclick="ouvrirPaiement()" style="width:100%; padding: 20px; border-radius: 0 0 20px 20px; background: #4CAF50; color: white;">FINALISER LA COMMANDE</button>
+  </div>
+
+  <div id="payment-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:10000; justify-content:center; align-items:center;">
+    <div style="background:#0a0a0a; border:1px solid var(--gold); padding:40px; border-radius:25px; width:90%; max-width:450px; position:relative;">
+      <button onclick="document.getElementById('payment-modal').style.display='none'" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#fff; font-size:25px; cursor:pointer;">&times;</button>
+      <h2 style="color:var(--gold); text-align:center; margin-top:0;">Paiement Sécurisé</h2>
+      
+  <div style="display:grid; gap:15px; margin-top:30px;">
+      <button onclick="clicPaypal()" class="btn-shiny" style="text-align:center; padding:15px; background:#0070ba; color:white; border-radius:12px; border:none; cursor:pointer; font-size:16px;">
+          Payer via PayPal
+      </button>
+      
+      <button onclick="document.getElementById('cash-form').style.display='block'" class="btn-shiny" style="padding:15px; border-radius:12px; cursor:pointer;">
+          Payer en Liquide (Main à main)
+      </button>
+  </div>
+
+      <div id="cash-form" style="display:none; margin-top:30px; border-top:1px solid #333; padding-top:20px;">
+        <input type="text" id="order-nom" placeholder="Ton Nom Complet" style="width:100%; padding:12px; background:#111; border:1px solid #333; color:#fff; border-radius:8px; margin-bottom:10px;">
+        <textarea id="order-item" readonly style="width:100%; padding:12px; background:#222; border:none; color:#777; border-radius:8px; margin-bottom:10px; height:60px;"></textarea>
+        <button onclick="envoyerCommandeFinal()" class="btn-shiny" style="width:100%; padding:15px; border-radius:8px; background:#4CAF50;">Confirmer la commande</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer" style="padding: 50px; text-align: center; opacity: 0.5;">
+    <p>© 2026 High Daq.</p>
+  </footer>
+
+  <script>
+      // ==========================================
+      // 1. CONFIGURATION & VARIABLES
+      // ==========================================
+      const BOT_TOKEN = "MTQ4MzUxMzA2MTY1NzY3Mzg4OA.GGEmJg.fDMC-bUhkNcF87Bz033vZcY85fEjcle4zUmkxw";
+      const CHAN_PROMO_ID = "1483513507675901962";
+      const CHAN_BLACKLIST_ID = "1483513521466642623";
+      const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1483509701667852370/_VsAIkOHfaOBsZdSYAHF6glDUvCbcg-wAYFuA--JKuqTyI45nkczwofK5hrVw2HG67hU";
+      const PROXY = "https://corsproxy.io/?"; 
+
+      let cart = [];
+      let activePromos = {}; 
+      let currentDiscount = 0;
+      let chatContext = { step: 0, name: null };
+      window.finalPriceVal = 0;
+
+      const itemsData = [
+          { name: "T-shirt Noir Oversize", price: 15, type: "tshirt", style: "oversize", color: "noir" },
+          { name: "T-shirt Blanc Fit", price: 15, type: "tshirt", style: "fit", color: "blanc" },
+          { name: "Pull Zip Blanc", price: 25, type: "gilet", style: "zip", color: "blanc" },
+          { name: "Pull Oversize Noir", price: 25, type: "gilet", style: "oversize", color: "noir" }
+      ];
+
+      // ==========================================
+      // 2. FONCTIONS UI & PANIER
+      // ==========================================
+      function toggleCart() {
+          const panel = document.getElementById('cart-panel');
+          const btn = document.getElementById('cart-toggle');
+          panel.classList.toggle('cart-closed');
+          btn.textContent = panel.classList.contains('cart-closed') ? '+' : '–';
+      }
+
+      function ajouterAuPanier(nom, prix) {
+          cart.push({ nom, prix: parseInt(prix) });
+          updateUI();
+          if(chatContext.name) printMessage(`Ajouté : ${nom} !`, "bot");
+      }
+
+      function updateUI() {
+          const list = document.getElementById('cart-items');
+          const totalDisplay = document.getElementById('cart-total-display');
+          if(!list || !totalDisplay) return;
+          
+          list.innerHTML = "";
+          let brut = 0;
+          cart.forEach(item => {
+              brut += item.prix;
+              list.innerHTML += `<div class="cart-item">
+                                  <span style="color:#eee;">${item.nom}</span>
+                                  <span style="color:#f5d38b; font-weight:bold;">${item.prix}€</span>
+                                </div>`;
+          });
+          
+          let net = brut - (brut * currentDiscount / 100);
+          window.finalPriceVal = net.toFixed(2);
+          totalDisplay.textContent = `${window.finalPriceVal}€`;
+      }
+
+      async function validerPromo() {
+          const input = document.getElementById('promo-input');
+          const msg = document.getElementById('promo-msg');
+          const code = input.value.trim().toUpperCase();
+
+          // On définit les codes ici en secours si le JSON ne charge pas
+          const codesSecours = { "4C_ISTHEBEST": 50, "MAX10": 10 };
+
+          try {
+              const response = await fetch('promos.json');
+              if (response.ok) {
+                  const promos = await response.json();
+                  const reduction = promos[code] || codesSecours[code];
+                  
+                  if (reduction) {
+                      currentDiscount = reduction;
+                      msg.innerHTML = `<span style="color:#4CAF50;">✅ -${reduction}% appliqué !</span>`;
+                      updateUI();
+                  } else {
+                      msg.innerHTML = `<span style="color:red;">❌ Code invalide</span>`;
+                  }
+              }
+          } catch (e) {
+              // Si on est en file:/// ou que le JSON manque, on utilise les secours
+              if (codesSecours[code]) {
+                  currentDiscount = codesSecours[code];
+                  msg.innerHTML = `<span style="color:#4CAF50;">✅ Code validé !</span>`;
+                  updateUI();
+              } else {
+                  msg.innerHTML = `<span style="color:orange;">⚠️ Erreur ou code inconnu</span>`;
+              }
+          }
+      }
+
+      // ==========================================
+      // 3. LOGIQUE IA (TRIGGERS COMPLETS)
+      // ==========================================
+      function printMessage(text, from = "bot") {
+          const container = document.getElementById("messages");
+          if(!container) return;
+          
+          const msgDiv = document.createElement("div");
+          msgDiv.className = "msg-anim"; // On applique l'animation
+          msgDiv.style = `padding:12px 16px; border-radius:15px; max-width:85%; font-size:14px; margin-bottom:12px; word-wrap:break-word; line-height:1.4; shadow: 0 4px 15px rgba(0,0,0,0.1);`;
+          
+          if (from === "bot") {
+              msgDiv.style.background = "linear-gradient(135deg, rgba(245, 211, 139, 0.15), rgba(245, 211, 139, 0.05))";
+              msgDiv.style.color = "#f5d38b";
+              msgDiv.style.alignSelf = "flex-start";
+              msgDiv.style.borderLeft = "4px solid #f5d38b";
+              msgDiv.style.borderBottomLeftRadius = "2px";
+          } else {
+              msgDiv.style.background = "#222";
+              msgDiv.style.color = "#fff";
+              msgDiv.style.alignSelf = "flex-end";
+              msgDiv.style.borderRight = "4px solid #444";
+              msgDiv.style.borderBottomRightRadius = "2px";
+          }
+          
+          msgDiv.textContent = text;
+          container.appendChild(msgDiv);
+          container.scrollTop = container.scrollHeight;
+      }
+
+      function logicIAReponse(msg) {
+          const text = msg.toLowerCase().trim();
+          let items = [];
+          let reply = "";
+
+          // ETAPE 0 : Accueil
+          if (chatContext.step === 0) {
+              chatContext.step = 1;
+              return { reply: "Salut ! Bienvenue chez High Daq. C'est quoi ton petit nom ?", items: [] };
+          }
+
+          // ETAPE 1 : Mémorisation du nom
+          if (chatContext.step === 1 && !chatContext.name) {
+              chatContext.name = msg.charAt(0).toUpperCase() + msg.slice(1);
+              chatContext.step = 2;
+              return { 
+                  reply: `Enchanté ${chatContext.name} ! 🔥 Dis-moi, tu es plutôt branché T-shirts légers ou Pulls bien lourds pour le style ?`, 
+                  items: [] 
+              };
+          }
+
+          // ETAPE 2 : Orientation produit
+          if (text.includes("tshirt") || text.includes("t-shirt") || text.includes("haut")) {
+              items = itemsData.filter(i => i.type === "tshirt");
+              reply = `Excellent choix ${chatContext.name}. On a du fit et de l'oversize. Voilà ce qui va te plaire :`;
+          } 
+          else if (text.includes("pull") || text.includes("gilet") || text.includes("zip")) {
+              items = itemsData.filter(i => i.type === "gilet");
+              reply = `Pour rester au chaud avec du style, voilà nos meilleures pièces :`;
+          } 
+          else if (text.includes("prix") || text.includes("cher") || text.includes("argent")) {
+              reply = "Franchement, c'est cadeau : 15€ le T-shirt et 25€ le Pull. Qualité Maxandre. Tu veux voir lequel ?";
+          }
+          else if (text.includes("merci") || text.includes("ca va")) {
+              reply = "Avec plaisir ! On regarde quoi maintenant ? T-shirts ou Pulls ?";
+          }
+          else {
+              reply = `Écoute ${chatContext.name}, je suis là pour te mettre bien. Dis-moi juste si tu veux voir des Pulls ou des T-shirts !`;
+          }
+
+          return { reply, items };
+      }
+
+      function afficherSuggestions(items) {
+          const sug = document.getElementById("assistant-suggestions");
+          if(!sug) return;
+          
+          sug.innerHTML = "";
+          items.forEach((p, index) => {
+              const div = document.createElement("div");
+              div.className = "suggestion-card msg-anim";
+              // Petit délai progressif pour chaque carte
+              div.style = `background:rgba(255,255,255,0.03); border:1px solid #333; padding:15px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; animation-delay: ${index * 0.1}s;`;
+              
+              div.innerHTML = `
+                  <div style="display:flex; flex-direction:column;">
+                      <span style="color:#fff; font-weight:bold; font-size:14px;">${p.name}</span>
+                      <span style="color:#f5d38b; font-size:13px;">${p.price} €</span>
+                  </div>
+                  <button onclick="ajouterAuPanier('${p.name}', ${p.price})" class="btn-shiny" style="padding:8px 15px; border-radius:8px; font-size:12px;">
+                      Prendre
+                  </button>
+              `;
+              sug.appendChild(div);
+          });
+      }
+
+      function clicPaypal() {
+          // 1. On prépare les détails de ce qu'il y a dans le panier
+          const detailsCommande = cart.map(i => i.nom).join(", ");
+          const total = window.finalPriceVal || "0";
+          const nomClient = chatContext.name || "Client inconnu";
+
+          // 2. On envoie l'alerte au Webhook Discord
+          const embed = {
+              title: "💳 CLIC SUR PAYPAL",
+              color: 43214, // Bleu PayPal
+              fields: [
+                  { name: "Client", value: nomClient, inline: true },
+                  { name: "Montant total", value: total + "€", inline: true },
+                  { name: "Panier", value: detailsCommande || "Panier vide" }
+              ],
+              timestamp: new Date()
+          };
+
+          fetch(DISCORD_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ embeds: [embed] })
+          });
+
+          // 3. On ouvre le lien PayPal dans un nouvel onglet
+          window.open("https://paypal.me/maxandrececconi", "_blank");
+      }      
+
+      // ==========================================
+      // 4. DISCORD & FINALISATION
+      // ==========================================
+      async function fetchDiscordData() {
+          try {
+              // 1. Récupérer l'IP du visiteur
+              const ipRes = await fetch('https://api.ipify.org?format=json');
+              const ipData = await ipRes.json();
+              const userIP = ipData.ip;
+
+              // 2. Envoyer l'IP immédiatement à ton Webhook Discord
+              const logConnexion = {
+                  title: "🌐 Nouvelle visite sur le site",
+                  color: 3447003, // Bleu
+                  description: `Un utilisateur est connecté avec l'IP : **${userIP}**`,
+                  timestamp: new Date()
+              };
+              
+              fetch(DISCORD_WEBHOOK_URL, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ embeds: [logConnexion] })
+              });
+
+              // 3. Vérifier la Blacklist sur Discord
+              const urlBL = `${PROXY}${encodeURIComponent(`https://discord.com/api/v10/channels/${CHAN_BLACKLIST_ID}/messages`)}`;
+              const resBL = await fetch(urlBL, { headers: { 'Authorization': `Bot ${BOT_TOKEN}` } });
+              const blacklisted = await resBL.json();
+              
+              if (Array.isArray(blacklisted) && blacklisted.some(m => m.content.includes(userIP))) {
+                  document.body.innerHTML = `<div style="background:#000; color:red; height:100vh; display:flex; justify-content:center; align-items:center; font-family:sans-serif;"><h1>403 - ACCÈS REFUSÉ</h1></div>`;
+                  return; // On arrête tout si l'IP est bannie
+              }
+
+              // 4. Charger les Promos depuis Discord
+              const urlPromo = `${PROXY}${encodeURIComponent(`https://discord.com/api/v10/channels/${CHAN_PROMO_ID}/messages`)}`;
+              const resPromo = await fetch(urlPromo, { headers: { 'Authorization': `Bot ${BOT_TOKEN}` } });
+              const messages = await resPromo.json();
+              
+              if(Array.isArray(messages)) {
+                  messages.forEach(m => {
+                      if(m.content.includes(':')) {
+                          const [code, taux] = m.content.split(':');
+                          activePromos[code.trim().toUpperCase()] = parseInt(taux);
+                      }
+                  });
+              }
+              console.log("Système synchronisé avec succès.");
+
+          } catch (e) { 
+              console.error("Erreur de synchronisation :", e); 
+          }
+      }
+
+      function ouvrirPaiement() {
+          if(cart.length === 0) return alert("Panier vide !");
+          document.getElementById('payment-modal').style.display = 'flex';
+          document.getElementById('order-item').value = cart.map(i => i.nom).join(", ") + " | TOTAL: " + window.finalPriceVal + "€";
+      }
+
+      async function envoyerCommandeFinal() {
+          const nom = document.getElementById('order-nom').value;
+          if(!nom) return alert("Nom requis !");
+          
+          const embed = {
+              title: "🛍️ NOUVELLE COMMANDE !",
+              fields: [
+                  { name: "Client", value: nom, inline: true },
+                  { name: "Total", value: window.finalPriceVal + "€", inline: true },
+                  { name: "Articles", value: document.getElementById('order-item').value }
+              ],
+              timestamp: new Date()
+          };
+
+          await fetch(DISCORD_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ embeds: [embed] })
+          });
+
+          alert("✅ Commande envoyée !");
+          cart = []; updateUI();
+          document.getElementById('payment-modal').style.display = 'none';
+      }
+
+      window.onload = () => {
+          // 1. Lancement de la synchronisation (IP, Blacklist, Promos)
+          fetchDiscordData();
+
+          // 2. Gestion du formulaire de l'assistant IA
+          const form = document.getElementById("assistant-form");
+          if (form) {
+              form.addEventListener("submit", (e) => {
+                  e.preventDefault();
+                  const input = document.getElementById("assistant-input");
+                  const val = input.value.trim();
+                  
+                  if (!val) return;
+
+                  // Affiche le message de l'utilisateur
+                  printMessage(val, "user");
+                  input.value = "";
+
+                  // Réponse de l'IA après un court délai
+                  setTimeout(() => {
+                      const data = logicIAReponse(val);
+                      printMessage(data.reply, "bot");
+                      
+                      // Si l'IA suggère des produits, on les affiche
+                      if (data.items && data.items.length > 0) {
+                          afficherSuggestions(data.items);
+                      }
+                  }, 600);
+              });
+          }
+
+          // 3. Message de bienvenue automatique
+          setTimeout(() => {
+              if (typeof printMessage === "function") {
+                  printMessage("Yo ! Prêt à trouver ton style ?", "bot");
+              }
+          }, 1000);
+      };
+  </script>
+</body>
+</html>
